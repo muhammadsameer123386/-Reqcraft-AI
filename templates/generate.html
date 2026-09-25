@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Generate SRS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title"><i class="bi bi-magic text-accent"></i> Generate SRS</h1>
+    <p class="page-subtitle">Describe your project and let AI produce an IEEE 830 compliant SRS document.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card-x">
+            <form method="POST" id="genForm">
+                <div class="mb-4">
+                    <label class="form-label-x">Project Name</label>
+                    <input type="text" name="project_name" class="form-control-x"
+                           placeholder="e.g. Online Library Management System"
+                           value="{{ project_name or '' }}">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label-x">Project Description</label>
+                    <textarea name="description" id="desc" class="form-control-x" rows="9"
+                        placeholder="Describe what the system should do, who uses it, key features, and any constraints...&#10;&#10;Example: A web-based library system where students can search and borrow books, librarians manage inventory, and admins generate reports. The system must handle up to 5000 users and integrate with the existing student database.">{{ description or '' }}</textarea>
+                    <div class="text-muted small mt-2 d-flex justify-content-between">
+                        <span><i class="bi bi-lightbulb"></i> The more detail you give, the better the SRS.</span>
+                        <span><span id="charCount">0</span> chars</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary-x mt-3" id="genBtn">
+                    <i class="bi bi-magic"></i> Generate SRS Document
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card-x mb-4">
+            <h2 class="h6 fw-bold mb-3"><i class="bi bi-list-check text-accent"></i> What you'll get</h2>
+            <div class="check-item"><i class="bi bi-check-circle-fill check-yes"></i> Full IEEE 830 structure</div>
+            <div class="check-item"><i class="bi bi-check-circle-fill check-yes"></i> Functional & non-functional requirements</div>
+            <div class="check-item"><i class="bi bi-check-circle-fill check-yes"></i> Compliance score</div>
+            <div class="check-item"><i class="bi bi-check-circle-fill check-yes"></i> Quality analysis</div>
+            <div class="check-item"><i class="bi bi-check-circle-fill check-yes"></i> Downloadable PDF</div>
+        </div>
+        <div class="card-x" style="background: var(--indigo-light); border-color: #c7d2fe;">
+            <div class="d-flex gap-3">
+                <i class="bi bi-info-circle-fill text-accent fs-4"></i>
+                <p class="small mb-0 text-secondary">Generation uses <b>Gemini</b> first, and automatically falls back to <b>HuggingFace</b> or <b>Ollama</b> if needed — so it always works.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    bindCounter('desc', 'charCount');
+    document.getElementById('genForm').addEventListener('submit', function() {
+        setLoading(document.getElementById('genBtn'), 'Generating SRS... (~15s)');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,35 @@
+# Environment
+.env
+venv/
+env/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Database
+instance/
+*.db
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads
+uploads/
+exports/
+
+# Private documents
+ReqCraft_AI_FYP_Proposal_final.pdf
+ReqCraft_AI_Gantt_Chart.pdf
+ReqCraft_AI_TechStack.pdf
+paper/
+docs/

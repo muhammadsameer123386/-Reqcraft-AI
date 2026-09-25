@@ -1,0 +1,12 @@
+fyp 1 
+
+FYP Title: ReqCraft AI - AI-Based SRS Generator and Quality Checker
+
+Domain:   Artificial Intelligence & Natural Language Processing
+
+
+task #1 
+
+professional UI banoe 
+
+FYP-1 covers: (1) AI-powered SRS generation following IEEE 830 standard with compliance scoring, (2) basic quality checking using NLP, and (3) basic upload analysis for existing SRS documents.

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block head %}
+<style>
+.auth-wrap { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+.auth-brand { background: linear-gradient(135deg, var(--indigo), var(--violet)); color: #fff; padding: 60px; display: flex; flex-direction: column; justify-content: center; }
+.auth-brand .b-logo { width: 60px; height: 60px; border-radius: 16px; background: rgba(255,255,255,.15); display: grid; place-items: center; font-size: 1.8rem; margin-bottom: 30px; }
+.auth-brand h2 { font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+.auth-brand p { font-size: 1.05rem; opacity: .9; line-height: 1.6; max-width: 420px; }
+.auth-feature { display: flex; align-items: center; gap: 12px; margin-top: 18px; font-weight: 500; }
+.auth-feature i { font-size: 1.2rem; }
+.auth-form-side { display: grid; place-items: center; padding: 40px; }
+.auth-card { width: 100%; max-width: 400px; }
+.auth-card h1 { font-size: 1.8rem; font-weight: 800; color: var(--slate-900); }
+.auth-card .sub { color: var(--slate-500); margin-bottom: 28px; }
+.auth-switch { text-align: center; margin-top: 22px; color: var(--slate-500); }
+@media (max-width: 860px) { .auth-wrap { grid-template-columns: 1fr; } .auth-brand { display: none; } }
+</style>
+{% endblock %}
+
+{% block guest_content %}
+<div class="auth-wrap">
+    <div class="auth-brand">
+        <div class="b-logo"><i class="bi bi-stars"></i></div>
+        <h2>Welcome back to ReqCraft AI</h2>
+        <p>Your intelligent assistant for IEEE 830 compliant SRS generation and quality checking.</p>
+        <div class="auth-feature"><i class="bi bi-check-circle-fill"></i> AI-powered SRS generation</div>
+        <div class="auth-feature"><i class="bi bi-check-circle-fill"></i> NLP quality analysis</div>
+        <div class="auth-feature"><i class="bi bi-check-circle-fill"></i> Compliance scoring</div>
+    </div>
+    <div class="auth-form-side">
+        <div class="auth-card">
+            <h1>Sign in</h1>
+            <p class="sub">Enter your credentials to access your dashboard.</p>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label-x">Email</label>
+                    <input type="email" name="email" class="form-control-x" placeholder="you@example.com" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-x">Password</label>
+                    <input type="password" name="password" class="form-control-x" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary-x w-100 justify-content-center">
+                    <i class="bi bi-box-arrow-in-right"></i> Sign In
+                </button>
+            </form>
+            <p class="auth-switch">Don't have an account? <a href="{{ url_for('auth.register') }}" class="text-accent fw-semibold">Create one</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

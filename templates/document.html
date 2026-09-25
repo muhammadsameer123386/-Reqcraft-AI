@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}{{ doc.project_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-3">
+    <div>
+        <a href="{{ url_for('main.dashboard') }}" class="text-muted small"><i class="bi bi-arrow-left"></i> Back to dashboard</a>
+        <h1 class="page-title mt-2">{{ doc.project_name }}</h1>
+        <p class="page-subtitle">
+            <span class="badge-x badge-provider"><i class="bi bi-{{ 'magic' if doc.source == 'generated' else 'cloud-arrow-up' }}"></i> {{ doc.source|capitalize }}</span>
+            {% if doc.provider and doc.provider != 'n/a' %}<span class="badge-x badge-gemini">{{ doc.provider }}</span>{% endif %}
+            <span class="text-muted ms-2">{{ doc.created_at.strftime('%d %b %Y, %H:%M') }}</span>
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('main.export_pdf', doc_id=doc.id) }}" class="btn-primary-x"><i class="bi bi-download"></i> Export PDF</a>
+        <form method="POST" action="{{ url_for('main.delete_document', doc_id=doc.id) }}" onsubmit="return confirm('Delete this document?')">
+            <button type="submit" class="btn-outline-x"><i class="bi bi-trash"></i></button>
+        </form>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Scores sidebar -->
+    <div class="col-lg-4 order-lg-2">
+        <div class="card-x mb-4 text-center">
+            <h2 class="h6 fw-bold mb-3">IEEE 830 Compliance</h2>
+            <div class="d-flex justify-content-center mb-2">
+                <div class="score-ring" data-pct="{{ compliance.score }}">
+                    <div class="score-ring-inner"><div class="score-ring-value">0</div><div class="score-ring-label">/ 100</div></div>
+                </div>
+            </div>
+            <span class="badge-x badge-{{ compliance.grade|lower }}">{{ compliance.grade }}</span>
+            <p class="text-muted small mt-2 mb-0">{{ compliance.present }}/{{ compliance.total }} sections present</p>
+        </div>
+
+        <div class="card-x mb-4 text-center">
+            <h2 class="h6 fw-bold mb-3">Quality Score</h2>
+            <div class="d-flex justify-content-center mb-2">
+                <div class="score-ring" data-pct="{{ quality.score }}">
+                    <div class="score-ring-inner"><div class="score-ring-value">0</div><div class="score-ring-label">/ 100</div></div>
+                </div>
+            </div>
+            <span class="badge-x badge-{{ quality.grade|lower }}">{{ quality.grade }}</span>
+            <p class="text-muted small mt-2 mb-0">{{ quality.total_issues }} issues found</p>
+        </div>
+
+        <div class="card-x">
+            <h2 class="h6 fw-bold mb-3">Section Checklist</h2>
+            <div style="max-height: 320px; overflow-y: auto;">
+            {% for s in compliance.sections %}
+            <div class="check-item">
+                {% if s.present %}<i class="bi bi-check-circle-fill check-yes"></i>{% else %}<i class="bi bi-circle check-no"></i>{% endif %}
+                <span class="{{ '' if s.present else 'text-muted' }}">{{ s.section }}</span>
+            </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Document content -->
+    <div class="col-lg-8 order-lg-1">
+        <div class="card-x">
+            <div class="srs-render" id="srsContent"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Markdown for client-side render (uploaded docs are markdownified server-side) -->
+<script type="application/json" id="rawContent">{{ render_content|tojson }}</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    const raw = JSON.parse(document.getElementById('rawContent').textContent);
+    const target = document.getElementById('srsContent');
+    if (window.marked) {
+        // gfm + breaks keeps line structure for plain-text (uploaded) docs,
+        // while still rendering proper Markdown headings for generated SRS.
+        marked.setOptions({ gfm: true, breaks: true, headerIds: false, mangle: false });
+        target.innerHTML = marked.parse(raw || '');
+    } else {
+        target.innerHTML = '<pre style="white-space:pre-wrap">' + (raw || '') + '</pre>';
+    }
+</script>
+{% endblock %}

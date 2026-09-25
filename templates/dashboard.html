@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-3">
+    <div>
+        <h1 class="page-title">Welcome, {{ current_user.name.split(' ')[0] }} 👋</h1>
+        <p class="page-subtitle">Here's an overview of your SRS documents and tools.</p>
+    </div>
+    <a href="{{ url_for('main.generate') }}" class="btn-primary-x"><i class="bi bi-magic"></i> New SRS</a>
+</div>
+
+<!-- Stats -->
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-icon indigo"><i class="bi bi-file-earmark-text"></i></div>
+        <div><div class="stat-value">{{ stats.total }}</div><div class="stat-label">Total Documents</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="bi bi-magic"></i></div>
+        <div><div class="stat-value">{{ stats.generated }}</div><div class="stat-label">AI Generated</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon violet"><i class="bi bi-cloud-arrow-up"></i></div>
+        <div><div class="stat-value">{{ stats.uploaded }}</div><div class="stat-label">Uploaded</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon amber"><i class="bi bi-patch-check"></i></div>
+        <div><div class="stat-value">{{ stats.avg_compliance }}%</div><div class="stat-label">Avg. Compliance</div></div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Documents list -->
+    <div class="col-lg-8">
+        <div class="card-x">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 fw-bold mb-0">Recent Documents</h2>
+            </div>
+            {% if docs %}
+                {% for doc in docs %}
+                <div class="doc-row">
+                    <div class="doc-icon">
+                        <i class="bi bi-{{ 'magic' if doc.source == 'generated' else 'cloud-arrow-up' }}"></i>
+                    </div>
+                    <div class="flex-grow-1 min-w-0">
+                        <div class="fw-semibold text-truncate">{{ doc.project_name }}</div>
+                        <div class="text-muted small">
+                            {{ doc.created_at.strftime('%d %b %Y, %H:%M') }}
+                            {% if doc.provider and doc.provider != 'n/a' %}
+                                · <span class="badge-x badge-{{ doc.provider.split(' ')[0] }}">{{ doc.provider }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-center px-2 d-none d-sm-block">
+                        <div class="fw-bold">{{ doc.compliance_score }}%</div>
+                        <div class="text-muted" style="font-size:.7rem">IEEE 830</div>
+                    </div>
+                    <div class="text-center px-2 d-none d-sm-block">
+                        <div class="fw-bold">{{ doc.quality_score }}%</div>
+                        <div class="text-muted" style="font-size:.7rem">Quality</div>
+                    </div>
+                    <a href="{{ url_for('main.view_document', doc_id=doc.id) }}" class="btn-outline-x py-2 px-3">View</a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <p class="mt-3 mb-3">No documents yet. Generate your first SRS!</p>
+                    <a href="{{ url_for('main.generate') }}" class="btn-primary-x"><i class="bi bi-magic"></i> Generate SRS</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Side panel -->
+    <div class="col-lg-4">
+        <div class="card-x mb-4">
+            <h2 class="h6 fw-bold mb-3">LLM Providers</h2>
+            <div class="d-flex justify-content-between align-items-center py-2">
+                <span><i class="bi bi-google me-2 text-primary"></i> Gemini <small class="text-muted">(Primary)</small></span>
+                <span class="provider-dot {{ 'dot-on' if providers.gemini else 'dot-off' }}"></span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2 border-top">
+                <span><i class="bi bi-robot me-2 text-warning"></i> HuggingFace <small class="text-muted">(Fallback)</small></span>
+                <span class="provider-dot {{ 'dot-on' if providers.huggingface else 'dot-off' }}"></span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2 border-top">
+                <span><i class="bi bi-cpu me-2 text-secondary"></i> Ollama <small class="text-muted">(Backup)</small></span>
+                <span class="provider-dot dot-off"></span>
+            </div>
+        </div>
+
+        <div class="card-x">
+            <h2 class="h6 fw-bold mb-3">Quick Actions</h2>
+            <a href="{{ url_for('main.generate') }}" class="btn-outline-x w-100 justify-content-start mb-2"><i class="bi bi-magic"></i> Generate SRS</a>
+            <a href="{{ url_for('main.quality') }}" class="btn-outline-x w-100 justify-content-start mb-2"><i class="bi bi-shield-check"></i> Check Quality</a>
+            <a href="{{ url_for('main.upload') }}" class="btn-outline-x w-100 justify-content-start"><i class="bi bi-cloud-arrow-up"></i> Analyze Upload</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

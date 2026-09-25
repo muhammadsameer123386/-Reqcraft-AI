@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}Upload Analysis{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title"><i class="bi bi-cloud-arrow-up text-accent"></i> Upload Analysis</h1>
+    <p class="page-subtitle">Upload an existing SRS document to check its IEEE 830 compliance and quality.</p>
+</div>
+
+<div class="card-x mb-4">
+    <form method="POST" enctype="multipart/form-data" id="upForm">
+        <label class="form-label-x">Select SRS Document</label>
+        <div class="upload-drop" id="dropZone">
+            <input type="file" name="file" id="fileInput" accept=".pdf,.docx,.txt" hidden>
+            <i class="bi bi-cloud-arrow-up-fill"></i>
+            <p class="mb-1 fw-semibold">Click to browse or drag a file here</p>
+            <p class="text-muted small mb-0">Supported: PDF, DOCX, TXT (max 16 MB)</p>
+            <div id="fileName" class="mt-2 fw-semibold text-accent"></div>
+        </div>
+        <button type="submit" class="btn-primary-x mt-3" id="upBtn"><i class="bi bi-search"></i> Analyze Document</button>
+    </form>
+</div>
+
+{% if analysis %}
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card-x h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h2 class="h6 fw-bold mb-0"><i class="bi bi-patch-check text-accent"></i> IEEE 830 Compliance</h2>
+                <span class="badge-x badge-{{ analysis.compliance.grade|lower }}">{{ analysis.compliance.grade }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-4 mb-3">
+                <div class="score-ring" data-pct="{{ analysis.compliance.score }}">
+                    <div class="score-ring-inner"><div class="score-ring-value">0</div><div class="score-ring-label">/ 100</div></div>
+                </div>
+                <div>
+                    <div class="fw-bold fs-5">{{ analysis.compliance.present }}/{{ analysis.compliance.total }} sections</div>
+                    <p class="text-muted small mb-0">{{ analysis.word_count }} words analyzed</p>
+                </div>
+            </div>
+            {% if analysis.compliance.missing %}
+            <div class="pt-2 border-top">
+                <p class="small fw-semibold mb-2">Missing sections:</p>
+                {% for m in analysis.compliance.missing %}
+                <span class="badge-x badge-poor mb-1"><i class="bi bi-x-circle"></i> {{ m }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card-x h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h2 class="h6 fw-bold mb-0"><i class="bi bi-shield-check text-accent"></i> Quality Assessment</h2>
+                <span class="badge-x badge-{{ analysis.quality.grade|lower }}">{{ analysis.quality.grade }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-4 mb-3">
+                <div class="score-ring" data-pct="{{ analysis.quality.score }}">
+                    <div class="score-ring-inner"><div class="score-ring-value">0</div><div class="score-ring-label">/ 100</div></div>
+                </div>
+                <div>
+                    <div class="fw-bold fs-5">{{ analysis.quality.total_issues }} issues</div>
+                    <p class="text-muted small mb-0">in {{ analysis.quality.total_sentences }} sentences</p>
+                </div>
+            </div>
+            {% if analysis.quality.counts %}
+            <div class="d-flex flex-wrap gap-2 pt-2 border-top">
+                {% for type, count in analysis.quality.counts.items() %}
+                <span class="badge-x badge-provider">{{ type }}: {{ count }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Detailed quality issues (where exactly the problems are) -->
+<div class="card-x mt-4">
+    <h2 class="h6 fw-bold mb-3"><i class="bi bi-list-check text-accent"></i> Detected Quality Issues</h2>
+    {% if analysis.quality.issues %}
+        <div style="max-height: 480px; overflow-y: auto;">
+        {% for issue in analysis.quality.issues %}
+        <div class="py-3 {% if not loop.last %}border-bottom{% endif %}">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="fw-semibold small">{{ issue.type }}</span>
+                <span class="sev sev-{{ issue.severity }}">{{ issue.severity }}</span>
+            </div>
+            <p class="small text-muted mb-1">{{ issue.message }}</p>
+            <p class="small mb-0 fst-italic text-secondary">"{{ issue.sentence }}"</p>
+        </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state py-4">
+            <i class="bi bi-check-circle text-success"></i>
+            <p class="mt-2 mb-0">No quality issues detected. Great job!</p>
+        </div>
+    {% endif %}
+</div>
+
+<div class="text-center mt-4">
+    <a href="{{ url_for('main.view_document', doc_id=analysis.doc_id) }}" class="btn-outline-x"><i class="bi bi-eye"></i> View Full Document</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block head %}
+<style>
+.upload-drop { border: 2px dashed var(--slate-300); border-radius: var(--radius); padding: 44px 20px; text-align: center; cursor: pointer; transition: all .15s; }
+.upload-drop:hover, .upload-drop.drag { border-color: var(--indigo); background: var(--indigo-light); }
+.upload-drop i { font-size: 2.6rem; color: var(--indigo); }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const dz = document.getElementById('dropZone');
+const fi = document.getElementById('fileInput');
+const fn = document.getElementById('fileName');
+dz.addEventListener('click', () => fi.click());
+fi.addEventListener('change', () => { if (fi.files[0]) fn.textContent = '📄 ' + fi.files[0].name; });
+['dragover','dragenter'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('drag'); }));
+['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('drag'); }));
+dz.addEventListener('drop', ev => { fi.files = ev.dataTransfer.files; if (fi.files[0]) fn.textContent = '📄 ' + fi.files[0].name; });
+document.getElementById('upForm').addEventListener('submit', () => setLoading(document.getElementById('upBtn'), 'Analyzing...'));
+</script>
+{% endblock %}

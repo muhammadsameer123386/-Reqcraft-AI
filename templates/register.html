@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block head %}
+<style>
+.auth-wrap { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+.auth-brand { background: linear-gradient(135deg, var(--violet), var(--indigo)); color: #fff; padding: 60px; display: flex; flex-direction: column; justify-content: center; }
+.auth-brand .b-logo { width: 60px; height: 60px; border-radius: 16px; background: rgba(255,255,255,.15); display: grid; place-items: center; font-size: 1.8rem; margin-bottom: 30px; }
+.auth-brand h2 { font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+.auth-brand p { font-size: 1.05rem; opacity: .9; line-height: 1.6; max-width: 420px; }
+.auth-feature { display: flex; align-items: center; gap: 12px; margin-top: 18px; font-weight: 500; }
+.auth-form-side { display: grid; place-items: center; padding: 40px; }
+.auth-card { width: 100%; max-width: 400px; }
+.auth-card h1 { font-size: 1.8rem; font-weight: 800; color: var(--slate-900); }
+.auth-card .sub { color: var(--slate-500); margin-bottom: 28px; }
+.auth-switch { text-align: center; margin-top: 22px; color: var(--slate-500); }
+@media (max-width: 860px) { .auth-wrap { grid-template-columns: 1fr; } .auth-brand { display: none; } }
+</style>
+{% endblock %}
+
+{% block guest_content %}
+<div class="auth-wrap">
+    <div class="auth-brand">
+        <div class="b-logo"><i class="bi bi-stars"></i></div>
+        <h2>Start automating your SRS today</h2>
+        <p>Join ReqCraft AI and cut your requirements documentation effort by up to 80%.</p>
+        <div class="auth-feature"><i class="bi bi-lightning-charge-fill"></i> Generate in seconds</div>
+        <div class="auth-feature"><i class="bi bi-graph-up-arrow"></i> Measurable quality scores</div>
+        <div class="auth-feature"><i class="bi bi-shield-lock-fill"></i> Free &amp; secure</div>
+    </div>
+    <div class="auth-form-side">
+        <div class="auth-card">
+            <h1>Create account</h1>
+            <p class="sub">Get started with ReqCraft AI in under a minute.</p>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label-x">Full Name</label>
+                    <input type="text" name="name" class="form-control-x" placeholder="Muhammad Sameer" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-x">Email</label>
+                    <input type="email" name="email" class="form-control-x" placeholder="you@example.com" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-x">Password</label>
+                    <input type="password" name="password" class="form-control-x" placeholder="At least 6 characters" required>
+                </div>
+                <button type="submit" class="btn-primary-x w-100 justify-content-center">
+                    <i class="bi bi-person-plus"></i> Create Account
+                </button>
+            </form>
+            <p class="auth-switch">Already have an account? <a href="{{ url_for('auth.login') }}" class="text-accent fw-semibold">Sign in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

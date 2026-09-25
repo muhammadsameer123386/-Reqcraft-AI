@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}AI-Based SRS Generator{% endblock %}
+{% block body_class %}landing{% endblock %}
+
+{% block head %}
+<style>
+.landing { background: #fff; }
+.lp-nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 6%; }
+.lp-brand { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; color: var(--slate-900); }
+.lp-hero { text-align: center; padding: 70px 6% 90px; background: radial-gradient(ellipse at top, #eef2ff, #fff 60%); }
+.lp-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--indigo-light); color: var(--indigo); padding: 7px 16px; border-radius: 30px; font-weight: 600; font-size: .85rem; margin-bottom: 24px; }
+.lp-title { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 800; color: var(--slate-900); line-height: 1.1; margin: 0 auto 20px; max-width: 880px; }
+.lp-title .grad { background: linear-gradient(135deg, var(--indigo), var(--violet)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.lp-sub { font-size: 1.18rem; color: var(--slate-500); max-width: 640px; margin: 0 auto 36px; line-height: 1.6; }
+.lp-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.lp-features { padding: 20px 6% 90px; max-width: 1180px; margin: 0 auto; }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 22px; }
+.feature-card { background: #fff; border: 1px solid var(--slate-200); border-radius: var(--radius); padding: 28px; transition: all .2s; }
+.feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--indigo); }
+.feature-ic { width: 54px; height: 54px; border-radius: 14px; display: grid; place-items: center; font-size: 1.5rem; margin-bottom: 18px; background: linear-gradient(135deg, var(--indigo), var(--violet)); color: #fff; }
+.feature-card h3 { font-size: 1.15rem; font-weight: 700; color: var(--slate-900); }
+.feature-card p { color: var(--slate-500); font-size: .92rem; line-height: 1.6; margin: 0; }
+.lp-stats { display: flex; gap: 50px; justify-content: center; flex-wrap: wrap; margin-top: 50px; }
+.lp-stat b { font-size: 2.4rem; font-weight: 800; color: var(--indigo); display: block; }
+.lp-stat span { color: var(--slate-500); }
+.lp-footer { text-align: center; padding: 30px; color: var(--slate-400); border-top: 1px solid var(--slate-200); font-size: .9rem; }
+</style>
+{% endblock %}
+
+{% block guest_content %}
+<nav class="lp-nav">
+    <div class="lp-brand"><span class="brand-logo"><i class="bi bi-stars"></i></span> ReqCraft<span class="text-accent">AI</span></div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('auth.login') }}" class="btn-outline-x">Login</a>
+        <a href="{{ url_for('auth.register') }}" class="btn-primary-x">Get Started</a>
+    </div>
+</nav>
+
+<section class="lp-hero">
+    <div class="lp-badge"><i class="bi bi-cpu"></i> Powered by Gemini + HuggingFace</div>
+    <h1 class="lp-title">Automate your <span class="grad">SRS documents</span> with AI</h1>
+    <p class="lp-sub">
+        Generate IEEE 830 compliant Software Requirements Specifications from a simple
+        description. Check quality, detect ambiguities, and score compliance — in seconds.
+    </p>
+    <div class="lp-cta">
+        <a href="{{ url_for('auth.register') }}" class="btn-primary-x"><i class="bi bi-magic"></i> Start Generating</a>
+        <a href="{{ url_for('auth.login') }}" class="btn-outline-x"><i class="bi bi-box-arrow-in-right"></i> Sign In</a>
+    </div>
+    <div class="lp-stats">
+        <div class="lp-stat"><b>80%</b><span>Less manual effort</span></div>
+        <div class="lp-stat"><b>IEEE 830</b><span>Standard compliant</span></div>
+        <div class="lp-stat"><b>3</b><span>LLM providers fallback</span></div>
+    </div>
+</section>
+
+<section class="lp-features">
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-ic"><i class="bi bi-magic"></i></div>
+            <h3>SRS Generation</h3>
+            <p>Turn a natural-language project description into a complete, structured SRS document following the IEEE 830-1998 standard format.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-ic"><i class="bi bi-shield-check"></i></div>
+            <h3>Quality Checking</h3>
+            <p>NLP-powered analysis detects ambiguities, vague terms, passive voice, and weak wording — with a measurable 0–100 quality score.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-ic"><i class="bi bi-patch-check"></i></div>
+            <h3>IEEE 830 Compliance</h3>
+            <p>Validate documents against the IEEE 830 structure with section-wise compliance scoring and automatic missing-section detection.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-ic"><i class="bi bi-cloud-arrow-up"></i></div>
+            <h3>Upload Analysis</h3>
+            <p>Upload an existing SRS (PDF / DOCX / TXT) and instantly get a compliance and quality assessment of your document.</p>
+        </div>
+    </div>
+</section>
+
+<footer class="lp-footer">
+    ReqCraft AI — AI-Based SRS Generator &amp; Quality Checker · FYP 2026
+</footer>
+{% endblock %}
